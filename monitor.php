@@ -2,7 +2,9 @@
 require 'vendor/autoload.php';
 require 'config.php';
 
-$checker = new Monitor\Check(new  GuzzleHttp\Client) ;
+$debug = defined('DEBUG_FILE') ? fopen(DEBUG_FILE,'a') : false;
+
+$checker = new Monitor\Check(new  GuzzleHttp\Client,$debug);
 $mandrill = new Mandrill(API_KEY);
 
 /*
