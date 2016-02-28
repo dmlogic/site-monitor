@@ -1,7 +1,6 @@
 <?php namespace Monitor;
 
-use Mandrill;
-use Mandrill_Error;
+use Mailgun\Mailgun;
 
 class Mailer {
 
@@ -12,9 +11,9 @@ class Mailer {
     private $subject;
     private $from;
 
-    public function __construct(Mandrill $mandrill,$siteName,$notify,$from,$response)
+    public function __construct(Mailgun $mailgun,$siteName,$notify,$from,$response)
     {
-        $this->mailer = $mandrill;
+        $this->mailer = $mailgun;
         $this->siteName = $siteName;
         $this->notify = $notify;
         $this->from = $from;
@@ -39,39 +38,13 @@ class Mailer {
     public function send()
     {
         try {
-            $messageData = array(
-                'html' => $this->message,
-                'subject' => $this->subject,
-                'from_email' => $this->from,
-                'from_name' => 'Site Monitor',
-                'to' => array(
-                    array(
-                        'email' => $this->notify,
-                        'type' => 'to'
-                    )
-                ),
-                'headers' => array('Reply-To' => $this->from),
-                'tags' => array('site-monitor'),
-                'important' => true,
-                'track_opens' => null,
-                'track_clicks' => null,
-                'auto_text' => null,
-                'auto_html' => null,
-                'inline_css' => null,
-                'url_strip_qs' => null,
-                'preserve_recipients' => null,
-                'view_content_link' => null,
-                'tracking_domain' => null,
-                'signing_domain' => null,
-                'return_path_domain' => null,
-            );
-            $async = false;
-            $ip_pool = 'Main Pool';
-            $result = $this->mailer->messages->send($messageData, $async, $ip_pool);
 
-            if(isset($result[0]) && $result[0]['status'] != 'sent') {
-                $message = $result[0]['reject_reason'];
-            }
+            $result = $this->mailer->sendMessage(API_DOMAIN, [
+                                            'from'    => 'Site Monitor <'. $this->from.'>',
+                                            'to'      => $this->notify,
+                                            'subject' => $this->subject,
+                                            'html'    => $this->message
+                                            ]);
             // print_r($result);
         } catch(Mandrill_Error $e) {
             // print_r($e);

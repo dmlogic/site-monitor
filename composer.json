@@ -1,7 +1,7 @@
 {
     "require": {
         "guzzlehttp/guzzle": "~6.0",
-        "mandrill/mandrill": "^1.0"
+        "mailgun/mailgun-php": "1.7.*"
     },
     "autoload": {
         "psr-0": {
